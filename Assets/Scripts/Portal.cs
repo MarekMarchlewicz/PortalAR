@@ -10,26 +10,38 @@ public class Portal : MonoBehaviour
     private Color effectColor = Color.white;
 
     [SerializeField]
-    private PortalTrigger innerTrigger, outerTrigger;
+    private PortalTrigger triggerArea;
 
     [SerializeField]
     private Transform releaseTransform;
 
+    [SerializeField]
+    private float shrinkingDistance;
+
+    [SerializeField]
+    private Color shrinkingDistanceDebugColor = Color.blue;
+
+    [SerializeField]
+    private float teleportDistance;
+
+    [SerializeField]
+    private Color teleportDistanceDebugColor = Color.red;
+
     private List<ITeleportable> teleportableObjectsNearby = new List<ITeleportable>();
 
-    public void Teleport(ITeleportable teleportable)
-    {
-        Debug.Log("Teleport " + gameObject.name);
+    private Transform m_Transform;
 
-        teleportableObjectsNearby.Add(teleportable);
+    public void Teleport(ITeleportable teleportable)
+    {        
         teleportable.MoveTo(releaseTransform);
     }
 
     private void Awake()
     {
-        innerTrigger.OnEntered += OnInnerTriggerEntered;
-        outerTrigger.OnEntered += OnOuterTriggerEntered;
-        outerTrigger.OnExited += OnOuterTriggerExited;
+        m_Transform = GetComponent<Transform>();
+
+        triggerArea.OnEntered += OnTriggerEntered;
+        triggerArea.OnExited += OnTriggerExited;
 
         foreach(ParticleSystem particle in GetComponentsInChildren<ParticleSystem>())
         {
@@ -37,30 +49,44 @@ public class Portal : MonoBehaviour
         }
     }
 
-    private void OnInnerTriggerEntered(ITeleportable teleportable)
+    private void OnTriggerEntered(ITeleportable teleportable)
     {
-        if (connectedPortals.Count < 1)
-            return;
-
-
-        Debug.Log("OnInnerTriggerEntered " + gameObject.name);
-        connectedPortals[Random.Range(0, connectedPortals.Count)].Teleport(teleportable);
-
-        teleportableObjectsNearby.Remove(teleportable);
-    }
-
-    private void OnOuterTriggerEntered(ITeleportable teleportable)
-    {
-        if (teleportableObjectsNearby.Contains(teleportable))
-            return;
-
-        Debug.Log("OnOuterTriggerEntered " + gameObject.name);
         teleportableObjectsNearby.Add(teleportable);
     }
 
-    private void OnOuterTriggerExited(ITeleportable teleportable)
+    private void OnTriggerExited(ITeleportable teleportable)
     {
-        Debug.Log("OnOuterTriggerExited " + gameObject.name);
         teleportableObjectsNearby.Remove(teleportable);
+    }
+
+    private void Update()
+    {
+        for(int i = 0; i < teleportableObjectsNearby.Count; i++)
+        {
+            ITeleportable teleportable = teleportableObjectsNearby[i];
+
+            float distance = teleportable.GetDistance(m_Transform.position);
+
+            if (connectedPortals.Count > 0 && distance < teleportDistance)
+            {
+                connectedPortals[Random.Range(0, connectedPortals.Count)].Teleport(teleportable);
+
+                teleportableObjectsNearby.Remove(teleportable);
+            }
+            else
+            {
+                float scale = (distance - teleportDistance) / shrinkingDistance;
+
+                teleportable.UpdateScale(Vector3.one * scale);
+            }
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = shrinkingDistanceDebugColor;
+        Gizmos.DrawWireSphere(transform.position, shrinkingDistance);
+        Gizmos.color = teleportDistanceDebugColor;
+        Gizmos.DrawWireSphere(transform.position, teleportDistance);
     }
 }
