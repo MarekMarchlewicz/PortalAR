@@ -56,6 +56,8 @@ public class Portal : MonoBehaviour
 
     private void OnTriggerExited(ITeleportable teleportable)
     {
+        teleportable.UpdateScale(1f);
+
         teleportableObjectsNearby.Remove(teleportable);
     }
 
@@ -70,14 +72,12 @@ public class Portal : MonoBehaviour
             if (connectedPortals.Count > 0 && distance < teleportDistance)
             {
                 connectedPortals[Random.Range(0, connectedPortals.Count)].Teleport(teleportable);
-
-                teleportableObjectsNearby.Remove(teleportable);
             }
             else
             {
                 float scale = (distance - teleportDistance) / shrinkingDistance;
 
-                teleportable.UpdateScale(Vector3.one * scale);
+                teleportable.UpdateScale(scale);
             }
         }
     }

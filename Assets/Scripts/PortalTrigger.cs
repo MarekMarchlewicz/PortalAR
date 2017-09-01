@@ -10,9 +10,9 @@ public class PortalTrigger : MonoBehaviour
     {
         ITeleportable teleportable = collider.GetComponent<ITeleportable>();
 
-        if(teleportable != null)
+        if(teleportable != null && OnEntered != null)
         {
-            OnEntered?.Invoke(teleportable);
+            OnEntered(teleportable);
         }
     }
 
@@ -20,9 +20,9 @@ public class PortalTrigger : MonoBehaviour
     {
         ITeleportable teleportable = collider.GetComponent<ITeleportable>();
 
-        if (teleportable != null)
+        if (teleportable != null && OnExited != null)
         {
-            OnExited?.Invoke(teleportable);
+            OnExited(teleportable);
         }
     }
 }
