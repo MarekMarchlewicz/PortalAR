@@ -7,6 +7,9 @@ public class Portal : MonoBehaviour
     private List<Portal> connectedPortals;
 
     [SerializeField]
+    private Color effectColor = Color.white;
+
+    [SerializeField]
     private PortalTrigger innerTrigger, outerTrigger;
 
     [SerializeField]
@@ -27,6 +30,11 @@ public class Portal : MonoBehaviour
         innerTrigger.OnEntered += OnInnerTriggerEntered;
         outerTrigger.OnEntered += OnOuterTriggerEntered;
         outerTrigger.OnExited += OnOuterTriggerExited;
+
+        foreach(ParticleSystem particle in GetComponentsInChildren<ParticleSystem>())
+        {
+            particle.startColor = effectColor;
+        }
     }
 
     private void OnInnerTriggerEntered(ITeleportable teleportable)
