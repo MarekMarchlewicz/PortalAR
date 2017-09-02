@@ -21,7 +21,7 @@ public class DragBehaviour : MonoBehaviour
 
     private int touchId = -1;
     private Camera dragCamera;
-    private const float defaultCameraDepth = 10f;
+    private const float defaultCameraDepth = 4f;
     
     private Vector3? lastPosition;
     private const int VELOCITIES_BUFFER = 7;
