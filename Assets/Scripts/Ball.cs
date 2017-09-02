@@ -53,8 +53,6 @@ public class Ball : MonoBehaviour, ITeleportable, ISelectable
 
         while(Mathf.Abs(currentAlpha - newAlpha) > 0.01f)
         {
-            Debug.Log((Time.time - startTime) / time);
-
             currentAlpha = Mathf.Lerp(currentAlpha, newAlpha, (Time.time - startTime) / time);
             currentColor.a = currentAlpha;
             selectionMaterial.SetColor(selectionColorId, currentColor);
