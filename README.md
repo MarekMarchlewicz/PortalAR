@@ -2,4 +2,4 @@
 
 Having fun with portals in AR
 
-![Alt text](/PPreviewPortal.gif?raw=true "Preview")
+![Alt text](/PreviewPortal.gif?raw=true "Preview")
